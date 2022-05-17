@@ -1,0 +1,11 @@
+5/4
+https://app.clickup.com/t/2kc2kh9
+Export data from staging database to local - 1.5h 
+Create Page Collection Type, test creating new - 1.5h
+Create Post Collection Type, test creating new - 1.5h
+https://app.clickup.com/t/3dc2ksE
+Create Author Collection Type for above 2 entites, test creating new - 1.5h
+Set up environment variables for backend for easier time deployment - 2h
+6/4
+https://app.clickup.com/t/3dc2ksE
+Test New feature - 8h
