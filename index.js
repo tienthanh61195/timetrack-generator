@@ -12,7 +12,7 @@ const projectIds = {
 const DAYS = ['mon', 'tues', 'wed', 'thu', 'fri', 'sat', 'sun']
 
 // -- Personal info -----------------------
-const project = 'flaia'
+const project = 'flaia' // project of your choice which should match projectIds properties
 const startDate = '14/05';
 const email = ''
 const password = ''
@@ -104,22 +104,22 @@ const x = fs.readFile('timetrack.txt', 'utf-8', (err, timeTrackData) => {
   const result = flatten(Object.values(entriesByDays))
 
   // TIME TRACK LOGIN API
-  // instance.post('/login', {
-  //   email: 'thanhnt@zigvy.com',
-  //   password: 'Nightmare95'
-  // }).then(response => {
-  //   const {authToken, userId} = response.data.data;
-  //   instance.post('/timetracking', {
-  //     projectId: projectIds[project],
-  //     entries: result
-  //   }, {
-  //     headers: {
-  //       'X-Auth-Token': authToken,
-  //       'X-User-Id': userId,
-  //       'Content-Type': 'application/json'
-  //     }}).then(res => {
-  //       console.log('res ', res.data)
-  //     });
-  // })
+  instance.post('/login', {
+    email,
+    password
+  }).then(response => {
+    const {authToken, userId} = response.data.data;
+    instance.post('/timetracking', {
+      projectId: projectIds[project],
+      entries: result
+    }, {
+      headers: {
+        'X-Auth-Token': authToken,
+        'X-User-Id': userId,
+        'Content-Type': 'application/json'
+      }}).then(res => {
+        console.log('res ', res.data)
+      });
+  })
 })
 
