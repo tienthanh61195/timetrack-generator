@@ -1,11 +1,20 @@
-5/4
-https://app.clickup.com/t/2kc2kh9
-Export data from staging database to local - 1.5h 
-Create Page Collection Type, test creating new - 1.5h
-Create Post Collection Type, test creating new - 1.5h
-https://app.clickup.com/t/3dc2ksE
-Create Author Collection Type for above 2 entites, test creating new - 1.5h
-Set up environment variables for backend for easier time deployment - 2h
-6/4
-https://app.clickup.com/t/3dc2ksE
-Test New feature - 8h
+6/6
+https://app.clickup.com/t/2exk975
+- Continue changing the report generating function - 4h
+- Add prefilled parameter for f.e to generate the prefilled form
+- Create sample COA file with pre entered FOCUS code for easier testing
+7/6
+https://app.clickup.com/t/2exk975
+Continue changing the report generating function
+- Get prefilled data from f.e to generate some of the fields of the FOCUS/SSOI report
+- Check the data generation throughly
+8/6
+https://app.clickup.com/t/2exk975
+Continue changing the report generating function
+- Add company info into the reports
+9/6
+https://app.clickup.com/t/2gwfz40
+- Add validation for COA file uploading
+10/6
+https://app.clickup.com/t/2gwg00e
+Check dashboard data and fix if needed

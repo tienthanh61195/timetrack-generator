@@ -1,125 +1,150 @@
-const { default: axios } = require('axios');
-const fs = require('fs');
-const { compact, flatten } = require('lodash');
-const moment = require('moment')
-const baseURL = 'https://time-tracker.zigvy.com/api/v1/'
+const { default: axios } = require("axios");
+const fs = require("fs");
+const compact = require("lodash/compact");
+const flatten = require("lodash/flatten");
+const moment = require("moment");
+const baseURL = "https://time-tracker.zigvy.com/api/v1/";
 const projectIds = {
-  flaia: 'bmSpbkmwizGsaCqAD',
-  efinop: 'FDn8hrSKA6GTNZD9x',
-  hrforte: 'GpEuPumiQTJ6xoftb',
-  freelancer: 'MkbeG9mmhrNJksFrr',
-}
-const DAYS = ['mon', 'tues', 'wed', 'thu', 'fri', 'sat', 'sun']
+  flaia: "bmSpbkmwizGsaCqAD",
+  efinop: "FDn8hrSKA6GTNZD9x",
+  hrforte: "GpEuPumiQTJ6xoftb",
+  freelancer: "MkbeG9mmhrNJksFrr",
+};
+const DEFAULT_TIME = "8h";
+const DAYS = ["mon", "tues", "wed", "thu", "fri", "sat", "sun"];
 
 // -- Personal info -----------------------
-const project = 'flaia' // project of your choice which should match projectIds properties
-const startDate = '14/05';
-const email = ''
-const password = ''
+const project = "efinop"; // project of your choice which should match projectIds properties
+const startDate = "14/05";
+const email = "";
+const password = "";
 // ----------------------------------------------
 const instance = axios.create({
   baseURL,
-})
-/*
-{
-  projectId: String
-  entries: [
-    {
-       issue: String // URL
-       date: "YYYY-MM-DD"
-       from: "hh:mm"
-       to: "hh:mm"
-       description: String
-    },
-    {
-       issue: String // URL
-       date: "YYYY-MM-DD"
-       from: "hh:mm"
-       to: "hh:mm"
-       description: String
-    }
-  ]
-}
-*/
+});
 
-const regExForDays = /^(Mon|Tue|Wed|Thur|Fri|Sat|Sun)/gi
+const regExForDays = /^(Mon|Tue|Wed|Thur|Fri|Sat|Sun)/gi;
 // const regExForLinks = /^(http|https).*(github|codecommit)/
-const regExForDate = /^\d{1,2}\/\d{1,2}/
-const regExForLinks = /^(http|https).*/
-const regExForIssueDuration = /(-\s*\d+(.\d+|\d*)h|\(\d+(.\d+|\d*)h\))/
+const regExForDate = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])$/;
+// const regExForDate = /^\d{1,2}\/\d{1,2}/;
+const regExForLinks = /^(http|https).*/;
+const regExForIssueDuration = /(-\s*\d+(.\d+|\d*)h|\(\d+(.\d+|\d*)h\))/;
 
-const startOfWeek = moment(startDate, 'DD/MM').startOf('week');
+const startOfWeek = moment(startDate, "DD/MM").startOf("week");
+(async () => {
+  try {
+    const timeTrackData = await fs.promises.readFile("timetrack.txt", "utf-8");
+    const array = [];
+    let dataArraySplitByNewLine = compact(timeTrackData.split(/\r?\n/));
+    let skipIndex = -1;
+    const length = dataArraySplitByNewLine.length - 1;
+    dataArraySplitByNewLine.forEach((line, i) => {
+      if (i <= skipIndex) return;
 
+      if (
+        i + 1 <= length &&
+        dataArraySplitByNewLine[i + 1].startsWith("-") &&
+        !regExForLinks.test(line)
+      ) {
+        let index = line.lastIndexOf("-");
+        let description = line.trim();
+        let time = DEFAULT_TIME;
+        if (index !== -1) {
+          description = line.slice(0, index).trim();
 
+          time = line.slice(index + 1).trim();
+        }
+        skipIndex = i;
+        while (
+          i !== length &&
+          dataArraySplitByNewLine[skipIndex + 1].startsWith("-")
+        ) {
+          description = description + "\n" + dataArraySplitByNewLine[i + 1];
+          skipIndex++;
+        }
 
-const x = fs.readFile('timetrack.txt', 'utf-8', (err, timeTrackData) => {
-  if (err) return;
-  const weekCount = []
-  const dataArraySplitByNewLine = compact(timeTrackData.split(/[\n\r]/));
-  const entriesByDays = {};
-  let currentDate = '';
-  let currentTime = '09:00';
-  const entries = [];
-  dataArraySplitByNewLine.forEach(data => {
-    // const dateFromData = data.match(regExForDays)?.[0]?.toLowerCase();
-    // if (dateFromData) {
-    //   weekCount[DAYS[dateFromData]] = !isNumber(weekCount[DAYS[dateFromData]]) ? 0 : (weekCount[DAYS[dateFromData]] + 1);
+        array.push(description + " - " + time);
+      } else {
+        if (
+          regExForDate.test(line) ||
+          regExForLinks.test(line) ||
+          (line.includes("-") && !line.startsWith("-"))
+        ) {
+          array.push(line);
+        } else array.push(line + " - " + DEFAULT_TIME);
+      }
+    });
+    dataArraySplitByNewLine = [...array];
 
-    // }
-    const dateFromData = data.match(regExForDate)?.[0];
-    if (dateFromData) {
-      // entriesByDays[dateFromData] = ({
-      //   date: moment(dateFromData, 'DD/MM').format('YYYY-MM-DD'),
-      // })
-      entriesByDays[dateFromData] = []
-      currentDate = dateFromData
-      currentTime = '09:00'
-      return
-    }
-    const currentEntry = entriesByDays[currentDate];
-    const entryLink = data.match(regExForLinks)?.[0];
-    if (entryLink) {
-      currentEntry.push({ issue: entryLink })
-      return
-    }
-    let currentEntryWithinDate = currentEntry[currentEntry.length - 1];
-    const timeMatch = data.match(regExForIssueDuration)
-    // console.log('TIME MATCH', timeMatch, data)
-    if (!timeMatch) return
-    const time = timeMatch[0].replace(/[^\d.]/g, '');
-    if (currentEntryWithinDate.start && currentEntryWithinDate.end) {
-      currentEntry.push({
-        issue: currentEntryWithinDate.issue,
-      })
-      currentEntryWithinDate = currentEntry[currentEntry.length - 1];
-    }
-    // console.log('CURRENT', currentEntryWithinDate)
-    currentEntryWithinDate.start = currentTime
-    currentTime = moment(currentTime, 'HH:mm').add(time, 'hours').format('HH:mm')
-    currentEntryWithinDate.end = currentTime
-    const description = data.substring(0, timeMatch['index']);
-    currentEntryWithinDate.description = description;
-    currentEntryWithinDate.dateSelected = moment(currentDate, 'DD/MM').format('YYYY-MM-DD')
-  })
-  const result = flatten(Object.values(entriesByDays))
+    const entriesByDays = {};
+    let currentDate = "";
+    let currentTime = "09:00";
+    const entries = [];
+    dataArraySplitByNewLine.forEach((data) => {
+      const dateFromData = data.match(regExForDate)?.[0];
+      if (dateFromData) {
+        entriesByDays[dateFromData] = [];
+        currentDate = dateFromData;
+        currentTime = "09:00";
+        return;
+      }
+      const currentEntry = entriesByDays[currentDate];
+      const entryLink = data.match(regExForLinks)?.[0];
+      if (entryLink) {
+        currentEntry.push({ issue: entryLink });
+        return;
+      }
+      let currentEntryWithinDate = currentEntry[currentEntry.length - 1];
+      const timeMatch = data.match(regExForIssueDuration);
 
-  // TIME TRACK LOGIN API
-  instance.post('/login', {
-    email,
-    password
-  }).then(response => {
-    const {authToken, userId} = response.data.data;
-    instance.post('/timetracking', {
-      projectId: projectIds[project],
-      entries: result
-    }, {
-      headers: {
-        'X-Auth-Token': authToken,
-        'X-User-Id': userId,
-        'Content-Type': 'application/json'
-      }}).then(res => {
-        console.log('res ', res.data)
-      });
-  })
-})
+      // console.log('TIME MATCH', timeMatch, data)
+      if (!timeMatch) return;
+      const time = timeMatch[0].replace(/[^\d.]/g, "");
+      if (currentEntryWithinDate.start && currentEntryWithinDate.end) {
+        currentEntry.push({
+          issue: currentEntryWithinDate.issue,
+        });
+        currentEntryWithinDate = currentEntry[currentEntry.length - 1];
+      }
+      // console.log('CURRENT', currentEntryWithinDate)
+      currentEntryWithinDate.start = currentTime;
+      currentTime = moment(currentTime, "HH:mm")
+        .add(time, "hours")
+        .format("HH:mm");
+      currentEntryWithinDate.end = currentTime;
+      const description = data.substring(0, timeMatch["index"]);
+      currentEntryWithinDate.description = description;
+      currentEntryWithinDate.dateSelected = moment(currentDate, "DD/MM").format(
+        "YYYY-MM-DD"
+      );
+    });
+    const result = flatten(Object.values(entriesByDays));
 
+    // // TIME TRACK LOGIN API
+    const {
+      data: {
+        data: { authToken, userId },
+      },
+    } = await instance.post("/login", {
+      email,
+      password,
+    });
+    const res = await instance.post(
+      "/timetracking",
+      {
+        projectId: projectIds[project],
+        entries: result,
+      },
+      {
+        headers: {
+          "X-Auth-Token": authToken,
+          "X-User-Id": userId,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("res ", res.data);
+  } catch (error) {
+    console.log(error);
+  }
+})();
