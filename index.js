@@ -1,8 +1,10 @@
+require('dotenv').config();
 const { default: axios } = require("axios");
 const fs = require("fs");
 const compact = require("lodash/compact");
 const flatten = require("lodash/flatten");
 const moment = require("moment");
+const generateReportFast = require("./generateReportFast");
 const baseURL = "https://time-tracker.zigvy.com/api/v1/";
 const projectIds = {
   flaia: "bmSpbkmwizGsaCqAD",
@@ -12,17 +14,19 @@ const projectIds = {
 };
 const DEFAULT_TIME = "8h";
 const DAYS = ["mon", "tues", "wed", "thu", "fri", "sat", "sun"];
-
+// --------------- IMPORTANT READ ---------------------------
+// SET .ENV FOR EMAIL, PASSWORD, PROJECT, START_DATE AND LEAVE_DAYS (["2/9"] for example)
+// ----------------------------------------------------------
 // -- Personal info -----------------------
-const project = "efinop"; // project of your choice which should match projectIds properties
-const startDate = "14/05";
-const email = "";
-const password = "";
+const email = process.env.EMAIL;
+const password = process.env.PASSWORD;
+const project = process.env.PROJECT
+const startDate = process.env.START_DATE
+const isFast = true; // Use fast report generate: check fast.txt for report format that would be much faster to generate compared to the timetrack.txt
 // ----------------------------------------------
 const instance = axios.create({
   baseURL,
 });
-
 const regExForDays = /^(Mon|Tue|Wed|Thur|Fri|Sat|Sun)/gi;
 // const regExForLinks = /^(http|https).*(github|codecommit)/
 const regExForDate = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])$/;
@@ -32,6 +36,7 @@ const regExForIssueDuration = /(-\s*\d+(.\d+|\d*)h|\(\d+(.\d+|\d*)h\))/;
 
 const startOfWeek = moment(startDate, "DD/MM").startOf("week");
 (async () => {
+  if (isFast) await generateReportFast();
   try {
     const timeTrackData = await fs.promises.readFile("timetrack.txt", "utf-8");
     const array = [];
@@ -49,14 +54,14 @@ const startOfWeek = moment(startDate, "DD/MM").startOf("week");
         let index = line.lastIndexOf("-");
         let description = line.trim();
         let time = DEFAULT_TIME;
-        if (index !== -1) {
+        if (index !== -1 && regExForIssueDuration.test(line)) {
           description = line.slice(0, index).trim();
-
+          
           time = line.slice(index + 1).trim();
         }
         skipIndex = i;
         while (
-          i !== length &&
+          i !== length && dataArraySplitByNewLine[skipIndex + 1] &&
           dataArraySplitByNewLine[skipIndex + 1].startsWith("-")
         ) {
           description = description + "\n" + dataArraySplitByNewLine[i + 1];
@@ -68,8 +73,9 @@ const startOfWeek = moment(startDate, "DD/MM").startOf("week");
         if (
           regExForDate.test(line) ||
           regExForLinks.test(line) ||
-          (line.includes("-") && !line.startsWith("-"))
+          (regExForIssueDuration.test(line) && !line.startsWith("-"))
         ) {
+          
           array.push(line);
         } else array.push(line + " - " + DEFAULT_TIME);
       }
@@ -97,7 +103,6 @@ const startOfWeek = moment(startDate, "DD/MM").startOf("week");
       let currentEntryWithinDate = currentEntry[currentEntry.length - 1];
       const timeMatch = data.match(regExForIssueDuration);
 
-      // console.log('TIME MATCH', timeMatch, data)
       if (!timeMatch) return;
       const time = timeMatch[0].replace(/[^\d.]/g, "");
       if (currentEntryWithinDate.start && currentEntryWithinDate.end) {
@@ -119,8 +124,6 @@ const startOfWeek = moment(startDate, "DD/MM").startOf("week");
       );
     });
     const result = flatten(Object.values(entriesByDays));
-
-    // // TIME TRACK LOGIN API
     const {
       data: {
         data: { authToken, userId },

@@ -1,308 +1,218 @@
-24/05
 https://app.clickup.com/t/29ba0qr
 Create new lambda function + API Gateway, also try multiple different ways to see why it shows result randomly
-25/05
 https://app.clickup.com/t/29ba0qr
 Start fixing the problem in the previously-set-up CI CD which only update changes in 1 of the 2 EC2 RANDOMLY, which causes the random response from b.e.
 - For now temporarily update each change manually until CI CD are fixed
-26/05
 https://app.clickup.com/t/2fepbk0
 Apply the API ot the View page (create new component and logic due to difference in data response comparing to previous "portal" page)
-27/05
 https://app.clickup.com/t/29ba0qr
 Add the "Export" function for the new portal (report) page
-30/05
 https://app.clickup.com/t/2fepbk0
 Build API for new report Registration page
-31/05
 https://app.clickup.com/t/2fepbk0
 Apply the API ot the Registration page (create new component and logic due to difference in data response comparing to previous "portal" page)
-01/06
 https://app.clickup.com/t/2fepbk0
 Tweak the query for getting the Registration page data
-02/06
 https://app.clickup.com/t/29ba0qx
 Build API for new report Post Event page
 - Fix report route bug
-03/06
 https://app.clickup.com/t/29ba0qx
 Apply the API ot the Post Event page (create new component and logic due to difference in data response comparing to previous "portal" page)
-06/06
 https://app.clickup.com/t/2m3d1a3
 Rework CI CD for b.e due to old one got bug that only updates 1 of the ec2 of the autoscaling group when the code base is updated
 - Add new codepipeline and codebuild
-07/06
 https://app.clickup.com/t/2m3d1a3
 Continue the reworking of CI CD
 - Add Codedeploy to auto-deploying to the autoscaling group when new code is updated
-08/06
 https://app.clickup.com/t/2m3d1a3
 Test the reworked CI CD flow thoroughly
-09/06
 https://app.clickup.com/t/2m3d1a3
 Remove the new codepipeline due to some settings with the old pipeline and its ec2 template that makes the app behave differently, but I'm not sure which settings they are, instead clean up the old CI CD pipeline
 - Rework the old pipeline's codebuild
-10/06
 https://app.clickup.com/t/2m3d1a3
 Add the codedeploy for deploying to the autoscaling group
 - Tweak the codedeploy IAM
-13/06
 https://app.clickup.com/t/2m3d1a3
 Fix a bug that cause the codebuild to sometimes fail to update the Strapi build that are saved to S3 bucket and access through Cloudfront
-14/06
 https://app.clickup.com/t/2m3d1a3
 Continue fixing the bug relating to codebuild with cloudfront and s3
-15/06
 https://app.clickup.com/t/2m3d1a3
 Configure the environment variables for code
-16/06
 https://app.clickup.com/t/2m3d29g
 Start unifying codebase of staging and prod environment, for better practice of development
 - Unify codebase of staging and prod environment for front end
 - Tweak the config file based on environment
-17/06
 https://app.clickup.com/t/2m3d29g
 Continue unifying the f.e 
 - Check for environment-based differences to setup
-20/06
 https://app.clickup.com/t/2m3d29g
 Fix some bugs of redirection due to differences in environment setup
 - Fix some other minor bugs along the way
-21/06
 https://app.clickup.com/t/29wgrft
 Rework the old loadWebinarData lambda function that no longer works and add some new logic (split data of users by the time they join and how long they join the conference/events for)
-22/06
 https://app.clickup.com/t/29wgrft
 Keep working on the new loadWebinar function
 - Write a function to generate a CSV file based on the generated data for testing purpose
-23/06
 https://app.clickup.com/t/29wgrft
 Tweak the function
 - Test again and done
-24/06
 https://app.clickup.com/t/2m3d29g
 Start working on unifying the b.e
 - Tweak strapi environment-based configurations
-27/06
 https://app.clickup.com/t/2m3d29g
 Continue unifying the b.e 
 - Check for other environment-based differences to setup
-28/06
 https://app.clickup.com/t/2m3d29g
 Remove the .env file, instead use the strapi innate environment setup based on the NODE_ENV variables
-29/06
 https://app.clickup.com/t/2m3d29g
 Research ways to merge the 2 codebase that has completely different history (2 sets of different repositories)
-30/06
 https://app.clickup.com/t/2m3d29g
 Apply the git way to merge the codebase and test
-01/07
 https://app.clickup.com/t/2m3d29g
 Fix a bug that cause the merge to still require massive rebasement when pulling the code from different report
-04/07
 https://app.clickup.com/t/2m3d29g
 Fix previously mentioned bug
 - Test the setup of both environments
-05/07
 https://app.clickup.com/t/3gb533r
 Check the static mode of the site
 - The site wasn't static generated (SSG), but SPA (Single page application, bad for SEO). Change config so that the site is SSG
-06/07
 https://app.clickup.com/t/3gb533r
 TWeak the logic of fetching data inside the code due to the difference between SSG and SPA.
-07/07
 https://app.clickup.com/t/3gb533r
 Fix authentication problem due to SSG mode
-08/07
 https://app.clickup.com/t/3gb533r
 Research SSG best practice for authentication
 - Apply the fix
-11/07
 https://app.clickup.com/t/3gb533r
 Continue trying different fix for the SSG authenticated content (different view of a same page based on authentication status)
-12/07
 https://app.clickup.com/t/3gb533r
 Revert back to SPA. There are many difficulties regarding authenticated content.
-13/07
 https://app.clickup.com/t/3gb534n
 Start working on SSR mode (Server side rendered). This will help with SEO, while keeping the performance of SPA (a.k.a, quite fast)
 - Change config
-14/07
 https://app.clickup.com/t/3gb534n
 Bug: Node-fetch package is causing error but it is required for multiple packages. Checking for fixes
-15/07
 https://app.clickup.com/t/3gb534n
 Many fixes suggest updating the node-fetch version, but doing so causes crashes
 - Fix by tweaking the package node-fetch itself
-18/07
 https://app.clickup.com/t/3gb534n
 Continue tweaking the config for SSR
-19/07
 https://app.clickup.com/t/3gb534n
 Change the logic of fetching data (SSR fetching is different from SPA fetching)
-20/07
 https://app.clickup.com/t/3gb534n
 Continue tweaking the logic of fetching data (SSR fetching is different from SPA fetching)
-21/07
 https://app.clickup.com/t/3gb534n
 Continue testing the changes
 - Change the config for serverless framework 
 - Remove functions that are used to support the live changes for SSG
-22/07
 https://app.clickup.com/t/3gb534n
 Set up EC2 for server that renders the f.e app
 - Set up autoscaling and load balancing
-25/07
 https://app.clickup.com/t/3gb534n
 Continue setting up the infrastructure
-26/07
 https://app.clickup.com/t/3gb534n
 Finish the infra setup
 - Test the app with these changes
-27/07
 https://app.clickup.com/t/3gb534n
 Set up CI CD for the new SSR page
-28/07
 https://app.clickup.com/t/3gb534n
 Continue setting up the CI CD (IAM and env config)
-29/07
 https://app.clickup.com/t/3gb534n
 Remove Ec2, move to setting up the "Serverless-side-rendered" page (use Lambda as a server to render frontend). Benefit is to reduce cost, increase performance
 - Research the method
-01/08
 https://app.clickup.com/t/3gb534n
 Continue setting up the serverless-side-rendered 
-02/08
 https://app.clickup.com/t/3gb534n
 Fix a bug that causes memory leak which leads to random code-500 error when accessing the flaia page
-03/08
 https://app.clickup.com/t/3gb534n
 Continue with fixing the leak bug
-04/08
 https://app.clickup.com/t/3gb534n
 Setup environment variables, set up the serverless function using the serverless framework
-05/08
 https://app.clickup.com/t/3gb534n
 Clean up the serverless framework set up
-08/08
 https://app.clickup.com/t/3gb534n
 Serverless framework got conflicted for some reason, which causes failure in deployment. Try to fix the problem
-09/08
 https://app.clickup.com/t/3gb534n
 Remove the cloudformation set up by the old serverless setup, create new to see if it fix the deployment failure
-10/08
 https://app.clickup.com/t/3gb534n
 Remove redundant settings from the serverless setup which were used by now-unnecessary SSR page
-11/08
 https://app.clickup.com/t/3gb534n
 Add some plugins to reduce the size of the deployed frontend app
-12/08
 https://app.clickup.com/t/3gb534n
 Fix the bug of assets missing in the SSR page
-15/08
 https://app.clickup.com/t/3gb534n
 Test the app to ensure performance
 - Test to see if SSR works by sending the page into a chat app (slack) to see if it shows content
-16/08
 https://app.clickup.com/t/3ggmevm
 Fix the bug that causes most of the companies route to be inaccessible (404 error)
-17/08
 https://app.clickup.com/t/3ggmevm
 The bug is caused by most of the companies missing their slugs. 
 - Write an API and trigger it to add the slugs
-18/08
 https://app.clickup.com/t/3ggmevm
 Test the companies with the new slugs
 - Add function to check for duplicating slugs just in case
-19/08
 https://app.clickup.com/t/3ggmfq2
 Fix carousel break in mobile view of marketplace
-22/08
 https://app.clickup.com/t/3ggmfug
 Fix reset password not working
-23/08
 https://app.clickup.com/t/3ggmfug
 Fix register not working
-24/08
 https://app.clickup.com/t/3ggmg30
 Add headers (JSON-LD) for Analytics and SEO purpose
-25/08
 https://app.clickup.com/t/3ggmg3h
 Write API to generate sitemap based on the routes. Nuxtjs is supposed to have such function but it doesn't work for some reason
-26/08
 https://app.clickup.com/t/3ggmg30
 Add missing fields in the header that are warned by the Google Analytics
 - Fetch data for the missing fields
-29/08
 https://app.clickup.com/t/3ggmgc5
 Start refactoring the logic of registering event - to ensure registration being successful, even if it fails due to zoom limit. 
 - Refactor the flow, first with the flow of registration with strapi -> registration to zoom
-30/08
 https://app.clickup.com/t/3ggmgc5
 Finish the new flow that involves analytics
-31/08
 https://app.clickup.com/t/3ggmgc5
 Start refactoring the logic of registering conference which requires multiple registering to events
-01/09
 https://app.clickup.com/t/3ggmgc5
 Finish the new flow that involves analytics (conference one)
-05/09
 https://app.clickup.com/t/3ggmgc5
 Add lambda function that automatically retries the registrations to zoom that were previously failed due to zoom limit
-06/09
 https://app.clickup.com/t/3ggmgc5
 Continue working on the function
-07/09
 https://app.clickup.com/t/3ggmgc5
 finalize the function
-08/09
 https://app.clickup.com/t/3ggmj1m
 Fix queueReminder lambda function
 - Trigger and test
-09/09
 https://app.clickup.com/t/3ggmjfz
 Start setting up the serverless framework for managing multiple b.e related lambda functions
-12/09
 https://app.clickup.com/t/3ggmjfz
 Continue setting up the functions
-13/09
 https://app.clickup.com/t/3ggmjfz
 Fix some of the functions logic
 - Config the environment variables for the functions
-14/09
 https://app.clickup.com/t/3ggmjfz
 Test the functions 
 - Setup codedeploy for the new serverless management flow
-15/09
 https://app.clickup.com/t/3ggmjfz
 Fix trigger period of some functions mismatched
 - Fix IAM role missing which causes error when calling the functions
-16/09
 https://app.clickup.com/t/3ggmqn9
 Start working on API that can quickly migrate the Zoom settings in case we got banned and need to migrate the events/conferences/registrations
 - Start with new Zoom creation based on the new credentials
-19/09
 https://app.clickup.com/t/3ggmqn9
 Finish the Zoom creation
 - Continue with event migration
-20/09
 https://app.clickup.com/t/3ggmqn9
 Finish the event migration logic
-21/09
 https://app.clickup.com/t/3ggmqn9
 Continue with conference migration
-22/09
 https://app.clickup.com/t/3ggmqn9
 Fix bugs that are caused by the logic that events belong to conferences, and need to have their zoom_id the same as conference
-23/09
 https://app.clickup.com/t/3gpb47x
 Migrate tags
 - Rename Marketplace product tags => tags (create new table, migrate the contents of the table, assign new relations for tables that are related to the marketplace product tags)
-26/09
 https://app.clickup.com/t/3gpb47x
 Continue working on tags
 - Assign tags for currently existed speakers and companies
-27/09
 https://app.clickup.com/t/3gpb47x
 Continue working on tags
 - Handle logic that would automatically update speakers n companies with new tags when new blog posts, events or marketplace product is created
