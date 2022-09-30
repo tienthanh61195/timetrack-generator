@@ -1,17 +1,12 @@
-26/09
 https://app.clickup.com/t/2pz389b
 - Add API for generating excel for Haircut summary
-27/09
 https://app.clickup.com/t/2pz389b
 - Add API for generating excel (continue)
 - Start working on generating PDF
-28/09
 https://app.clickup.com/t/2pz389b
 - Continue generating PDF API
 - Test
-29/09
 https://app.clickup.com/t/2pz389b
 - Report still miss some fields, if we have those fields confirmed, then tweak the API
-30/09
 https://app.clickup.com/t/2pz389b
 - Finish the API completely if fields are confirmed
